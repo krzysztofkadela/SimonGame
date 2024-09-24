@@ -5,7 +5,7 @@
 
 
 
-const {game, newGame} = require("../game");
+const {game, newGame, showsScore, addTurn} = require("../game");
 
 
 beforeAll(() => {
@@ -40,15 +40,48 @@ describe("new game function works correctly", () => {
         game.score = 42;
         game.currentGame=["buton1", "button2"];
         game.playerMove = ["button1, button2"];
+        document.getElementById("score").innerText = "42";
         newGame();
     })
     test("score key value is set to 0", () => {
         expect(game.score).toEqual(0);
     });
-    test("currentGame empty array", () => {
-        expect(game.currentGame.length).toBe(0);
-    });
+
+    test("should be move in the computer's game array", () => {
+        expect(game.currentGame.length).toBe(1);
+    })
+    //test("currentGame empty array", () => {
+    //    expect(game.currentGame.length).toBe(0);
+    //});
     test("should clear playerGame array", () => {
         expect(game.playerMove.length).toBe(0);
     });
+    test("should set score in DOM to 0", () => {
+        expect(document.getElementById("score").innerText).toBe(0);
+    });
+   
 })
+
+describe("gameplay works correctly", () => {
+    beforeEach(() => {
+       game.score = 0;
+       game.currentGame = [];
+       game.playerMove = [];
+       addTurn();
+     });
+     afterEach(() => {
+        game.score = 0;
+        game.currentGame = [];
+        game.playerMove = [];
+     });
+     test("addTurn adds a new turn to the game", () => {
+        addTurn();
+        expect(game.currentGame.length).toEqual(2);
+     });
+     test("should add correct to light up the buttons", () => {
+        let button = document.getElementById(game.currentGame[0]);
+        ligtsOn(game.currentGame[0]);
+        expect(button.classList).toContain("light");
+     });
+ });
+ 
