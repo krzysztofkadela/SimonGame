@@ -1,15 +1,21 @@
-
 /**
  * @jest-environment jsdom
  */
 
 
 
-const {game, newGame, showsScore, addTurn} = require("../game");
+const {
+    game,
+    newGame,
+    showsScore,
+    addTurn,
+    lightOn,
+    showTurn
+} = require("../game");
 
 
 beforeAll(() => {
-    let fs =require("fs");
+    let fs = require("fs");
     let fileContents = fs.readFileSync("index.html", "utf-8");
     document.open();
     document.write(fileContents);
@@ -19,6 +25,9 @@ beforeAll(() => {
 describe("game object contains correct keys", () => {
     test("score key exists", () => {
         expect("score" in game).toBe(true);
+    });
+    test("turnNumber key exists", () => {
+        expect("turnNumber" in game).toBe(true);
     });
     test("current game key exist", () => {
         expect("currentGame" in game).toBe(true);
@@ -32,13 +41,13 @@ describe("game object contains correct keys", () => {
     test("choices contain correct ids", () => {
         expect(game.choices).toEqual(["button1", "button2", "button3", "button4"]);
     });
-        
+
 })
 
 describe("new game function works correctly", () => {
     beforeAll(() => {
         game.score = 42;
-        game.currentGame=["buton1", "button2"];
+        game.currentGame = ["buton1", "button2"];
         game.playerMove = ["button1, button2"];
         document.getElementById("score").innerText = "42";
         newGame();
@@ -59,29 +68,40 @@ describe("new game function works correctly", () => {
     test("should set score in DOM to 0", () => {
         expect(document.getElementById("score").innerText).toBe(0);
     });
-   
+    test("expect data-listener to be true", () => {
+        const elements = document.getElementsByClassName("circle");
+        for (let element of elements) {
+            expect(element.getAttribute("data-listener")).toEqual("true");
+
+        }
+    })
 })
 
 describe("gameplay works correctly", () => {
     beforeEach(() => {
-       game.score = 0;
-       game.currentGame = [];
-       game.playerMove = [];
-       addTurn();
-     });
-     afterEach(() => {
         game.score = 0;
         game.currentGame = [];
         game.playerMove = [];
-     });
-     test("addTurn adds a new turn to the game", () => {
+        addTurn();
+    });
+    afterEach(() => {
+        game.score = 0;
+        game.currentGame = [];
+        game.playerMove = [];
+    });
+    test("addTurn adds a new turn to the game", () => {
         addTurn();
         expect(game.currentGame.length).toEqual(2);
-     });
-     test("should add correct to light up the buttons", () => {
+    });
+    test("should add correct to light up the buttons", () => {
         let button = document.getElementById(game.currentGame[0]);
-        ligtsOn(game.currentGame[0]);
+        lightOn(game.currentGame[0]);
         expect(button.classList).toContain("light");
-     });
- });
- 
+    });
+    test("showTurn should update game.turnNumber", () => {
+        game.turNumber = 43;
+        showTurn();
+        expect(game.turnNumber).toBe(0);
+
+    })
+});
