@@ -10,7 +10,8 @@ const {
     showsScore,
     addTurn,
     lightOn,
-    showTurn
+    showTurn,
+    playerTurn
 } = require("../game");
 
 
@@ -103,5 +104,10 @@ describe("gameplay works correctly", () => {
         showTurn();
         expect(game.turnNumber).toBe(0);
 
+    })
+    test("should increments a score if the turn iscorrect", () => {
+        game.playerMove.push(game.currentGame[0]);
+        playerTurn();
+        expect(game.score).toBe(1);
     })
 });
